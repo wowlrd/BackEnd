@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+        <div class="row mt-4 mx-auto">
+            <div class="col-md-3">
+                <div class="d-flex flex-column">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <form method="get" action="{% url 'filtered_catalog' %}">
+                                <form method="get" class="form-inline">
+                                    <label for="category">Category:</label>
+                                    <select class="form-control" id="category" name="category">
+                                        <option value="">All</option>
+                                        {% for category in categories %}
+                                            <option name="category">{{ category.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" class="btn btn-outline-success mb-1">Find</button>
+                                </form>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="row">
+                    <ul>
+                        {% for list in products %}
+                            <li class="mx-3 mb-5">
+                                <a href="{% url 'product_detail' list.id %}">
+                                    <img src="{{ list.picture.url }}" style="width:300px;height:240px">
+                                </a>
+                                <br>
+                                <span>{{ list.name }}</span>
+                                <br>
+                                <span>{{ list.price }} $</span>
+                            </li>
+                        {% empty %}
+                            <h3 class="text-center">No products found by your filter</h3>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

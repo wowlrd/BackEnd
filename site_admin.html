@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!--Main Cards-->
+<div class="row">
+
+  <div class="col">
+    <div class="col-md">
+      <div class="card text-center text-white mb-3" id="total-products">
+        <div class="card-header">
+          <h5 class="card-title">Total Products</h5>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ total_products }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="col-md">
+      <div class="card text-center text-white mb-3" id="total-orders">
+        <div class="card-header">
+          <h5 class="card-title">Total Users</h5>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ total_users }}</h3>
+                      <a class="btn btn-primary btn-info " href="{% url 'user_list' %}">View</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="col-md">
+      <div class="card text-center text-white mb-3" id="admin-now">
+        <div class="card-header">
+          <h5 class="card-title">Admin:</h5>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Hello, {{ request.user }}</h3>
+          <a class="btn btn-primary btn-info " href="{% url 'logout' %}">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Add Delete Update-->
+    <div class="row">
+        <div class="col-md-12">
+            <h5>Products</h5>
+            <hr>
+            <div class="card card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <th>Category</th>
+                        <th>Name</th>
+                        <th>Date Added</th>
+                        <th>Price</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+
+                    {% for product in products %}
+                        <tr>
+                            <td>{{ product.category }}</td>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.date_created }}</td>
+                            <td>{{ product.price }} KZT</td>
+
+                            <td><a class="btn btn-sm btn-info" href="{% url 'edit_product' product.id %}">Edit</a></td>
+                            <td><a class="btn btn-sm btn-danger" href="{% url 'delete_product' product.id %}">Delete</a></td>
+
+                        </tr>
+                    {% endfor %}
+                </table>
+                    <a class="btn btn-info btn-lg col-12" href="{% url 'create_product' %}">Add Product</a>
+            </div>
+        </div>
+
+<!--        <div class="col-md-6">-->
+<!--            <h5>Orders</h5>-->
+<!--            <hr>-->
+<!--            <div class="card card-body">-->
+<!--                <table class="table table-sm">-->
+<!--                    <tr>-->
+<!--                        <th>Product</th>-->
+<!--                        <th>Date Ordered</th>-->
+<!--                        <th>Status</th>-->
+<!--                        <th>Edit</th>-->
+<!--                        <th>Remove</th>-->
+<!--                    </tr>-->
+<!--                </table>-->
+<!--                <a class="btn btn-primary btn-info btn-block" href="">Create Order</a>-->
+<!--            </div>-->
+<!--        </div>-->
+
+    </div>
+{% endblock content %}

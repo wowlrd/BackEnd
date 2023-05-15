@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="product-list">
+<ul>
+  {% for product in product_list %}
+  <li>
+      <a href="{% url 'product_detail' product.id %}">
+          <img src="{{ product.picture.url }}" width="200px" height="250px" alt="">
+      </a>
+      <br>
+      <span>{{ product.name }}</span>
+      <br>
+      <span>{{ product.category }}</span>
+      <br>
+      <span>{{ product.price }}</span>
+  </li>
+  {% endfor %}
+</ul>
+</div>
+{% endblock %}
+

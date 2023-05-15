@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+
+  <div class="col-md-5">
+    <div class="card card-body">
+      <hr>
+      <h3 style="text-align: center"> {{ product.name }} </h3>
+      <hr>
+        <p> {{ product.description }} </p>
+      <hr>
+      
+      <h3 style="text-align: center;  "> {{ product.price }} $</h3>
+    <div class="main_booking_product_container">
+          <div class="title_booking_product_block" style="margin-top:10px;">
+              Book:
+          </div>
+          <form action="{% url 'add-to-basket' product.pk %}" method="POST">
+              {% csrf_token %}
+              <label for="quantity">
+                  <div class="quantity_booking_product_block">
+                      <i id="minus">-</i>
+
+                      <input type="number" name="quantity" id="quantity" value="1">
+
+                      <i id="plus">+</i>
+                  </div>
+                  <span class="price_booking_product_block">
+                      <p id="price">{{ product.price }}</p> $
+                  </span>
+              </label>
+              {% if in_basket %}
+<!--                  <p class="error_message">You already book this hotel.<br> Check your booking on more time.</p>-->
+                  <button type="submit" name="add_basket" value="{{ product.pk }}" disabled style="background-color: #5c5c5c; margin-top: 30px;">Add</button>
+              {% else %}
+                  <button type="submit" name="add_basket" value="{{ product.pk }}">Add</button>
+              {% endif %}
+          </form>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="col-md-7">
+    <div class="card card-body">
+      <img class="profile-pic" src="{{ product.picture.url }}" alt="" style="width:100%">
+      <a href="{% url 'main_page' %}" class="btn btn-dark" style="margin-top:10px;">Back</a>
+    </div>
+  </div>
+
+</div>
+
+    <div class="reviews_product_main_container">
+        <div class="title_reviews_product_block">
+            <h1>Reviews</h1>
+        </div>
+        <div class="reviews_product_main_block">
+            <div class="reviews_list_product_main_info">
+                <hr style="background-color: #5c5c5c;">
+                <div class="reviews_list_product_block">
+                    {% for comment in comments %}
+                        <div class="review_product_block">
+                            <div class="author_review_product_block">
+                                {{ comment.author.username }}
+                            </div>
+                            <div class="rating_review_product_block">
+
+                                <div class="rating_block_main_review">
+                                    {% if comment.rating == 5 %}Great -- 5.0
+                                    {% elif comment.rating == 4 %}Good -- 4.0
+                                    {% elif comment.rating == 3 %}Not bad -- 3.0
+                                    {% elif comment.rating == 2 %}Bad -- 2.0
+                                    {% else %}Awful -- 1.0
+                                    {% endif %}
+                                </div>
+
+                                <div class="created_date_review_product_block">
+                                    {{ comment.created_at|date:"F j, Y" }}
+                                </div>
+
+                            </div>
+
+                            <div class="main_text_review_product_block">
+                                <p>{{ comment.comment_text }}</p>
+                            </div>
+
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="reviews_list_product_additional_service">
+                {% if user.is_authenticated %}
+                    <div class="write_review_product_block">
+                        Write review
+                    </div>
+                {% endif %}
+                <div class="new_review_product_block">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="title_new_review_product_block">
+                            <h1>New review</h1>
+                        </div>
+                        <hr style="background-color: #5c5c5c;">
+                        <div class="rating_new_review_product_block">
+                            <label for="rating">
+                                <p>Rate our hotel</p>
+                                <select class="form-control" name="comment_rating" id="rating">
+                                    <option value="0">Rating</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </label>
+                            <label for="comment_text">
+                                <p>Review</p>
+                                <textarea class="form-control" name="comment_text" id="comment_text" cols="30" rows="10" placeholder="Type..." required></textarea>
+                            </label>
+                        </div>
+                        <button type="submit">Add review</button>
+                    </form>
+                </div>
+
+                {% if rating != 0 %}
+                    <div class="new_rating_review_product_block">
+
+                        <div class="main_info_core_rating_block">
+                            <div class="different_rating_main_info_core_rating">
+                            </div>
+
+                        </div>
+
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const minus = document.querySelector('#minus');
+        const plus = document.querySelector('#plus');
+        const quantity = document.querySelector('#quantity');
+
+        let productPrice = {{ product.price }};
+        let price = document.querySelector('#price');
+
+        function updatePrice() {
+            const totalPrice = productPrice * parseInt(quantity.value);
+            price.textContent = totalPrice;
+        }
+
+        minus.addEventListener('click', () => {
+            if (quantity.value === '1') {
+                minus.disabled = true;
+            }
+            else {
+                minus.disabled = false;
+                quantity.value = parseInt(quantity.value) - 1;
+                updatePrice();
+                plus.disabled = false; // enable the plus button when decrementing quantity
+            }
+        });
+
+        plus.addEventListener('click', () => {
+            if (quantity.value === '5') {
+                plus.disabled = true;
+            }
+            else {
+                plus.disabled = false;
+                quantity.value = parseInt(quantity.value) + 1;
+                updatePrice();
+                minus.disabled = false; // enable the minus button when incrementing quantity
+            }
+        });
+
+    </script>
+
+    <script>
+        const openBtn = document.querySelector('.write_review_product_block');
+        const openBlock = document.querySelector('.new_review_product_block');
+        const closeBtn = document.querySelector('.close_new_review_product_block');
+
+        openBtn.addEventListener('click', () => {
+            openBlock.style.display = 'block';
+            openBtn.style.display = 'none';
+        })
+
+        closeBtn.addEventListener('click', () => {
+            openBlock.style.display = 'none';
+            openBtn.style.display = 'inline-flex';
+        })
+
+    </script>
+
+{% endblock content %}

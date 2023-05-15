@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}
+    {% if form.is_valid and search_text %}
+        Результаты поиска по запросу "{{ search_text }}"
+    {% else %}
+        Book Search
+    {% endif %}
+{% endblock %}
+{% block content %}
+<div>
+{% if form.is_valid and search_text %}
+<h3>Результаты поиска по запросу <em>{{ search_text }}</em></h3>
+<div style="display: block;">
+    <ul class="list-group">
+    {% for product in products %}
+    <li class="list-group-item">
+        <a href="{% url 'product_detail' product.pk %}"><img src="{{ product.picture.url }}" width="220" height="240"/></a>
+        <a href="{% url 'product_detail' product.pk %}">{{ product }}</a>
+        <br/>
+    </li>
+    {% empty %}
+        <li class="list-group-item">No results found.</li>
+    {% endfor %}
+</ul>
+</div>
+{% endif %}
+</div>
+{% endblock %}
